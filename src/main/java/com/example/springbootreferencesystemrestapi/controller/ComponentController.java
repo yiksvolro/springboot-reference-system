@@ -1,6 +1,7 @@
 package com.example.springbootreferencesystemrestapi.controller;
 
 import com.example.springbootreferencesystemrestapi.api.models.ComponentApiModel;
+import com.example.springbootreferencesystemrestapi.helpers.SearchType;
 import com.example.springbootreferencesystemrestapi.service.interfaces.IComponentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,9 +42,9 @@ public class ComponentController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    @GetMapping("/getComponentsByComputer/{id}")
-    public ResponseEntity<ArrayList<ComponentApiModel>> GetComponentsByComputerId(@PathVariable int id){
-        var result = componentService.GetComponentsByComputerId(id);
+    @GetMapping("/getBy/{searchType}/{parameter}")
+    public ResponseEntity<ArrayList<ComponentApiModel>> GetBy(@PathVariable String parameter, @PathVariable SearchType searchType){
+        var result = componentService.GetBy(parameter, searchType);
         if(result != null)
             return new ResponseEntity<>(result, HttpStatus.OK);
         else

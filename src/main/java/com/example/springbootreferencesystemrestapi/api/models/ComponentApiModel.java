@@ -23,6 +23,8 @@ public class ComponentApiModel {
     private String inventoryNumber;
     @JsonProperty("computerId")
     private int computerId;
+    @JsonProperty("computer")
+    private ComputerApiModel computer;
     public ComponentApiModel(){
 
     }

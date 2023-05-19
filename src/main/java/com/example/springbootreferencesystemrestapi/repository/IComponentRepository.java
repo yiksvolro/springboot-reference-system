@@ -7,4 +7,9 @@ import java.util.List;
 
 public interface IComponentRepository extends JpaRepository<Component, Integer> {
     List<Component> findByComputerId(int computerId);
+    List<Component> findByType(String type);
+    List<Component> findByBrand(String brand);
+    List<Component> findByInventoryNumber(String inventoryNumber);
+    List<Component> findByIsFree(boolean isFree);
+
 }

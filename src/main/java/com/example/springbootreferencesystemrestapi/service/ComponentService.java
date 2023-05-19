@@ -2,6 +2,7 @@ package com.example.springbootreferencesystemrestapi.service;
 
 import com.example.springbootreferencesystemrestapi.api.models.ComponentApiModel;
 import com.example.springbootreferencesystemrestapi.api.models.ComputerApiModel;
+import com.example.springbootreferencesystemrestapi.helpers.SearchType;
 import com.example.springbootreferencesystemrestapi.models.Component;
 import com.example.springbootreferencesystemrestapi.models.Computer;
 import com.example.springbootreferencesystemrestapi.repository.IComponentRepository;
@@ -12,6 +13,9 @@ import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @Service()
 public class ComponentService implements IComponentService {
     private final IComponentRepository _repository;
@@ -51,8 +55,9 @@ public class ComponentService implements IComponentService {
     }
 
     @Override
-    public ArrayList<ComponentApiModel> GetComponentsByComputerId(int computerId) {
-        var result = _repository.findByComputerId(computerId);
+    public ArrayList<ComponentApiModel> GetBy(String parameter, SearchType searchType) {
+
+        var result = FindData(parameter, searchType);
         if(result.isEmpty()) return null;
         ArrayList<ComponentApiModel> apiModels = new ArrayList<>();
         result.forEach(computer -> {
@@ -97,5 +102,32 @@ public class ComponentService implements IComponentService {
             model.setFree(true);
         }
         return model;
+    }
+    private List<Component> FindData(String parameter, SearchType searchType) {
+        List<Component> result = null;
+        switch (searchType) {
+            case Type:
+                result = _repository.findByType(parameter);
+                break;
+            case InventoryNumber:
+                result = _repository.findByInventoryNumber(parameter);
+                break;
+            case Brand:
+                result = _repository.findByBrand(parameter);
+                break;
+            case Free:
+                result = _repository.findByIsFree(true);
+                break;
+            case NonFree:
+                result = _repository.findByIsFree(false);
+                break;
+            case ComputerId:
+                result = _repository.findByComputerId(Integer.parseInt(parameter));
+                break;
+            default:
+                result = null;
+                break;
+        }
+        return result;
     }
 }
