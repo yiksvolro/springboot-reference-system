@@ -5,12 +5,12 @@ import com.example.springbootreferencesystemrestapi.api.models.ComputerApiModel;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-
 @Service
-public interface IComputerService{
-    ComputerApiModel Create(ComputerApiModel entity);
-    ComputerApiModel GetById(int id);
-    ArrayList<ComputerApiModel> GetAll();
-    ComputerApiModel Update(ComputerApiModel entity);
+public interface IComponentService {
+    ComponentApiModel Create(ComponentApiModel entity);
+    ComponentApiModel GetById(int id);
+    ArrayList<ComponentApiModel> GetAll();
+    ArrayList<ComponentApiModel> GetComponentsByComputerId(int computerId);
+    ComponentApiModel Update(ComponentApiModel entity);
     boolean Delete(int id);
 }

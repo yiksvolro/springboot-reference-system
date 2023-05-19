@@ -3,6 +3,7 @@ package com.example.springbootreferencesystemrestapi.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Computers")
@@ -17,6 +18,8 @@ public class Computer {
     private String description;
     @Column(name = "InventoryNumber")
     private String inventoryNumber;
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Component> components;
 
     public Computer(){
 

@@ -1,8 +1,7 @@
 package com.example.springbootreferencesystemrestapi.controller;
 
 import com.example.springbootreferencesystemrestapi.api.models.ComponentApiModel;
-import com.example.springbootreferencesystemrestapi.api.models.ComputerApiModel;
-import com.example.springbootreferencesystemrestapi.service.interfaces.IComputerService;
+import com.example.springbootreferencesystemrestapi.service.interfaces.IComponentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/api/computers")
-public class ComputerController {
+@RequestMapping("/api/components")
+public class ComponentController {
     @Autowired
-    IComputerService computerService;
+    IComponentService componentService;
     @PostMapping("/create")
-    public ResponseEntity<ComputerApiModel> CreateComputer(@RequestBody ComputerApiModel computer){
-        var result = computerService.Create(computer);
+    public ResponseEntity<ComponentApiModel> CreateComputer(@RequestBody ComponentApiModel component){
+        var result = componentService.Create(component);
         if(result != null){
             return new ResponseEntity<>(result, HttpStatus.CREATED);
         }
@@ -25,17 +24,16 @@ public class ComputerController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     @GetMapping("/getById/{id}")
-    public ResponseEntity<ComputerApiModel> GetById(@PathVariable int id){
-        var result = computerService.GetById(id);
+    public ResponseEntity<ComponentApiModel> GetById(@PathVariable int id){
+        var result = componentService.GetById(id);
         if(result != null)
             return new ResponseEntity<>(result, HttpStatus.OK);
         else
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
     @GetMapping("/getAll")
-    public ResponseEntity<ArrayList<ComputerApiModel>> GetAll(){
-        var result = computerService.GetAll();
+    public ResponseEntity<ArrayList<ComponentApiModel>> GetAll(){
+        var result = componentService.GetAll();
         if(result != null){
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
@@ -43,9 +41,17 @@ public class ComputerController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    @GetMapping("/getComponentsByComputer/{id}")
+    public ResponseEntity<ArrayList<ComponentApiModel>> GetComponentsByComputerId(@PathVariable int id){
+        var result = componentService.GetComponentsByComputerId(id);
+        if(result != null)
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
     @PutMapping("/update")
-    public ResponseEntity<ComputerApiModel> Update(@RequestBody ComputerApiModel model){
-        var result = computerService.Update(model);
+    public ResponseEntity<ComponentApiModel> Update(@RequestBody ComponentApiModel model){
+        var result = componentService.Update(model);
         if(result != null){
             return new ResponseEntity<>(result, HttpStatus.OK);
         }
@@ -55,12 +61,12 @@ public class ComputerController {
     }
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> Delete(@PathVariable int id){
-        var result = computerService.Delete(id);
+        var result = componentService.Delete(id);
         if(result){
-            return  new ResponseEntity<>("Комп'ютер видалено успішно!", HttpStatus.OK);
+            return  new ResponseEntity<>("Компонент видалено успішно!", HttpStatus.OK);
         }
         else{
-            return  new ResponseEntity<>("Помилка при видаленні комп'ютера", HttpStatus.BAD_REQUEST);
+            return  new ResponseEntity<>("Помилка при видаленні компонента", HttpStatus.BAD_REQUEST);
         }
 
     }

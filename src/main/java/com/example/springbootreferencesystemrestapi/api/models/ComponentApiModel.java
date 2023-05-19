@@ -5,27 +5,25 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @JsonAutoDetect
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ComputerApiModel {
+public class ComponentApiModel {
     @JsonProperty("id")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private int id;
-    @JsonProperty("name")
+    @JsonProperty("type")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String name;
-    @JsonProperty("description")
+    private String type;
+    @JsonProperty("brand")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String description;
+    private String brand;
     @JsonProperty("inventoryNumber")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String inventoryNumber;
-    @JsonProperty("components")
-    private List<ComponentApiModel> components;
-    public ComputerApiModel(){
+    @JsonProperty("computerId")
+    private int computerId;
+    public ComponentApiModel(){
 
     }
 }

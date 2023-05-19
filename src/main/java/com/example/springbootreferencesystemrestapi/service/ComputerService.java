@@ -1,6 +1,7 @@
 package com.example.springbootreferencesystemrestapi.service;
 
 
+import com.example.springbootreferencesystemrestapi.api.models.ComponentApiModel;
 import com.example.springbootreferencesystemrestapi.api.models.ComputerApiModel;
 import com.example.springbootreferencesystemrestapi.models.Computer;
 import com.example.springbootreferencesystemrestapi.repository.IComputerRepository;
@@ -9,7 +10,7 @@ import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 
 @Service()
 public class ComputerService implements IComputerService {
@@ -33,21 +34,40 @@ public class ComputerService implements IComputerService {
     public ComputerApiModel GetById(int id) {
         var result = _repository.findById(id);
         if(result.isEmpty()) return null;
-        return _mapper.map(result, ComputerApiModel.class);
+        return _mapper.map(result.get(), ComputerApiModel.class);
     }
 
     @Override
-    public ComputerApiModel GetAll() {
-        return null;
+    public ArrayList<ComputerApiModel> GetAll() {
+        var result = _repository.findAll();
+        if(result.isEmpty()) return null;
+        ArrayList<ComputerApiModel> apiModels = new ArrayList<ComputerApiModel>();
+        result.forEach(computer -> {
+            ComputerApiModel apiModel = _mapper.map(computer, ComputerApiModel.class);
+            apiModels.add(apiModel);
+        });
+        return apiModels;
     }
 
     @Override
     public ComputerApiModel Update(ComputerApiModel entity) {
-        return null;
+        //check if entity exists in db
+        var entityNotExists = _repository.findById(entity.getId()).isEmpty();
+        if(entityNotExists) return null;
+
+        var model = _mapper.map(entity, Computer.class);
+        var result = _repository.save(model);
+        return _mapper.map(result, ComputerApiModel.class);
     }
 
     @Override
-    public void Delete(int id) {
-
+    public boolean Delete(int id) {
+        try{
+            _repository.deleteById(id);
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
     }
 }
