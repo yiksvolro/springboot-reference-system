@@ -63,6 +63,8 @@ public class ComputerService implements IComputerService {
     @Override
     public boolean Delete(int id) {
         try{
+            var computer = _repository.findById(id).get();
+            computer.getComponents().forEach(component -> component.setComputer(null));
             _repository.deleteById(id);
             return true;
         }

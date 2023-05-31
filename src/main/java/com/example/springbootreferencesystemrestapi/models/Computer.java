@@ -18,7 +18,7 @@ public class Computer {
     private String description;
     @Column(name = "InventoryNumber")
     private String inventoryNumber;
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)
     private List<Component> components;
 
     public Computer(){
@@ -43,5 +43,8 @@ public class Computer {
     }
     public void addComponent(Component component) {
         components.add(component);
+    }
+    public void deleteComponent(Component component){
+        components.remove(component);
     }
 }
