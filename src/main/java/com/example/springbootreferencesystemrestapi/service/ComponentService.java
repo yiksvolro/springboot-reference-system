@@ -32,25 +32,24 @@ public class ComponentService implements IComponentService {
         model = AddComputerToModel(entity);
 
         _repository.save(model);
-        return entity;
+        var result = _mapper.map(model, ComponentApiModel.class);
+        return result;
     }
 
     @Override
     public ComponentApiModel GetById(int id) {
         var result = _repository.findById(id);
         if(result.isEmpty()) return null;
-        return _mapper.map(result.get(), ComponentApiModel.class);
+        var model = _mapper.map(result.get(), ComponentApiModel.class);
+        model.setComputerId(result.get().getComputer().getId());
+        return model;
     }
 
     @Override
     public ArrayList<ComponentApiModel> GetAll() {
         var result = _repository.findAll();
         if(result.isEmpty()) return null;
-        ArrayList<ComponentApiModel> apiModels = new ArrayList<>();
-        result.forEach(computer -> {
-            ComponentApiModel apiModel = _mapper.map(computer, ComponentApiModel.class);
-            apiModels.add(apiModel);
-        });
+        ArrayList<ComponentApiModel> apiModels = CreateListOfComponents(result);
         return apiModels;
     }
 
@@ -59,11 +58,7 @@ public class ComponentService implements IComponentService {
 
         var result = FindData(parameter, searchType);
         if(result.isEmpty()) return null;
-        ArrayList<ComponentApiModel> apiModels = new ArrayList<>();
-        result.forEach(computer -> {
-            ComponentApiModel apiModel = _mapper.map(computer, ComponentApiModel.class);
-            apiModels.add(apiModel);
-        });
+        ArrayList<ComponentApiModel> apiModels = CreateListOfComponents(result);
         return apiModels;
     }
 
@@ -96,6 +91,8 @@ public class ComponentService implements IComponentService {
             if(computer.isPresent()){
                 model.setComputer(computer.get());
                 model.setFree(false);
+                computer.get().addComponent(model);
+                _computerRepository.save(computer.get());
             }
         }
         else{
@@ -129,5 +126,14 @@ public class ComponentService implements IComponentService {
                 break;
         }
         return result;
+    }
+    private ArrayList<ComponentApiModel> CreateListOfComponents(List<Component> components){
+        var apiModels = new ArrayList<ComponentApiModel>();
+        components.forEach(component -> {
+            ComponentApiModel apiModel = _mapper.map(component, ComponentApiModel.class);
+            apiModel.setComputerId(component.getId());
+            apiModels.add(apiModel);
+        });
+        return apiModels;
     }
 }

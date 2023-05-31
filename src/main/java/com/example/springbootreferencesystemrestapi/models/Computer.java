@@ -41,4 +41,7 @@ public class Computer {
     public String getInventoryNumber(){
         return inventoryNumber;
     }
+    public void addComponent(Component component) {
+        components.add(component);
+    }
 }

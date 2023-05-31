@@ -27,7 +27,7 @@ public class ComputerService implements IComputerService {
     public ComputerApiModel Create(ComputerApiModel entity) {
         var result = _mapper.map(entity, Computer.class);
         _repository.save(result);
-        return entity;
+        return _mapper.map(result, ComputerApiModel.class);
     }
 
     @Override
