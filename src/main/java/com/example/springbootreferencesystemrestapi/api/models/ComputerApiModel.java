@@ -23,8 +23,7 @@ public class ComputerApiModel {
     @JsonProperty("inventoryNumber")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String inventoryNumber;
-    @JsonProperty("components")
-    private List<ComponentApiModel> components;
+
     public ComputerApiModel(){
 
     }
