@@ -131,7 +131,9 @@ public class ComponentService implements IComponentService {
         var apiModels = new ArrayList<ComponentApiModel>();
         components.forEach(component -> {
             ComponentApiModel apiModel = _mapper.map(component, ComponentApiModel.class);
-            apiModel.setComputerId(component.getId());
+            if(component.getComputer() != null){
+                apiModel.setComputerId(component.getComputer().getId());
+            }
             apiModels.add(apiModel);
         });
         return apiModels;
