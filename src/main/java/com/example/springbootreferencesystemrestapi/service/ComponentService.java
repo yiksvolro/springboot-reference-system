@@ -31,9 +31,12 @@ public class ComponentService implements IComponentService {
         var model = _mapper.map(entity, Component.class);
         model = AddComputerToModel(entity);
 
-        _repository.save(model);
-        var result = _mapper.map(model, ComponentApiModel.class);
-        return result;
+        var result = _repository.save(model);
+        var newModel = _mapper.map(result, ComponentApiModel.class);
+        if(result.getComputer() != null){
+            newModel.setComputerId(result.getComputer().getId());
+        }
+        return newModel;
     }
 
     @Override
@@ -41,7 +44,9 @@ public class ComponentService implements IComponentService {
         var result = _repository.findById(id);
         if(result.isEmpty()) return null;
         var model = _mapper.map(result.get(), ComponentApiModel.class);
-        model.setComputerId(result.get().getComputer().getId());
+        if(result.get().getComputer() != null){
+            model.setComputerId(result.get().getComputer().getId());
+        }
         return model;
     }
 
@@ -64,14 +69,30 @@ public class ComponentService implements IComponentService {
 
     @Override
     public ComponentApiModel Update(ComponentApiModel entity) {
-        //check if entity exists in db
-        var entityNotExists = _repository.findById(entity.getId()).isEmpty();
-        if(entityNotExists) return null;
+        Component existingComponent = _repository.findById(entity.getId()).orElse(null);
+        if (existingComponent != null) {
+            // Оновлення полів компонента
+            existingComponent.setType(entity.getType());
+            existingComponent.setBrand(entity.getBrand());
+            existingComponent.setInventoryNumber(entity.getInventoryNumber());
 
-        var model = _mapper.map(entity, Component.class);
-        model = AddComputerToModel(entity);
-        var result = _repository.save(model);
-        return _mapper.map(result, ComponentApiModel.class);
+            int computerId = 0;
+            // Перевірка, чи компонент пов'язаний з комп'ютером
+            if (entity.getComputerId() != 0) {
+                // Встановлення нового зв'язку з комп'ютером
+                existingComponent.setComputer(_computerRepository.findById(entity.getComputerId()).get());
+                computerId = existingComponent.getComputer().getId();
+            } else {
+                // Видалення зв'язку з комп'ютером, якщо компонент не пов'язаний з жодним комп'ютером
+                existingComponent.setComputer(null);
+            }
+
+            // Збереження оновленого компонента
+            var result = _mapper.map(_repository.save(existingComponent), ComponentApiModel.class);
+            result.setComputerId(computerId);
+            return result;
+        }
+        return null;
     }
 
     @Override
@@ -92,7 +113,6 @@ public class ComponentService implements IComponentService {
                 model.setComputer(computer.get());
                 model.setFree(false);
                 computer.get().addComponent(model);
-                _computerRepository.save(computer.get());
             }
         }
         else{
