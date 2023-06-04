@@ -4,23 +4,28 @@ package com.example.springbootreferencesystemrestapi.service;
 import com.example.springbootreferencesystemrestapi.api.models.ComponentApiModel;
 import com.example.springbootreferencesystemrestapi.api.models.ComputerApiModel;
 import com.example.springbootreferencesystemrestapi.models.Computer;
+import com.example.springbootreferencesystemrestapi.repository.IComponentRepository;
 import com.example.springbootreferencesystemrestapi.repository.IComputerRepository;
+import com.example.springbootreferencesystemrestapi.service.interfaces.IComponentService;
 import com.example.springbootreferencesystemrestapi.service.interfaces.IComputerService;
 import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import com.github.dozermapper.core.Mapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service()
 public class ComputerService implements IComputerService {
 
     private final IComputerRepository _repository;
+    private final IComponentRepository _componentRepository;
     private final Mapper _mapper;
 
-    public ComputerService(IComputerRepository repository) {
+    public ComputerService(IComputerRepository repository, IComponentRepository componentRepository) {
         _repository = repository;
         _mapper = DozerBeanMapperBuilder.buildDefault();
+        _componentRepository = componentRepository;
     }
 
     @Override
@@ -64,12 +69,19 @@ public class ComputerService implements IComputerService {
     public boolean Delete(int id) {
         try{
             var computer = _repository.findById(id).get();
-            computer.getComponents().forEach(component -> component.setComputer(null));
+            _componentRepository.findByComputerId(id).forEach(component -> component.setComputer(null));
             _repository.deleteById(id);
             return true;
         }
         catch (Exception e){
             return false;
         }
+    }
+
+    @Override
+    public boolean CreateFromFile(List<Computer> computers) {
+        var result = _repository.saveAll(computers);
+        if(result.isEmpty()) return false;
+        return true;
     }
 }
